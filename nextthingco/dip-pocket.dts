@@ -1,0 +1,198 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+
+	/* Pinctrl changes */
+	fragment@0 {
+		target = <&pio>;
+
+		__overlay__ {
+			chip_bl_en: chip_backlight_enable@0 {
+				allwinner,pins = "PD18";
+				allwinner,function = "gpio_out";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
+		};
+	};
+
+	/* Enable the PWM */
+	fragment@1 {
+		target = <&pwm>;
+
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&pwm0_pins>;
+			status = "okay";
+		};
+	};
+
+	/* And enable the backlight running on that PWM */
+	fragment@2 {
+		target-path = "/";
+
+		__overlay__ {
+			backlight: backlight {
+				compatible = "pwm-backlight";
+				pwms = <&pwm 0 5000 2>;
+
+				brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
+				default-brightness-level = <8>;
+
+				pinctrl-names = "default";
+				pinctrl-0 = <&chip_bl_en>;
+				enable-gpios = <&pio 3 18 0>;
+			};
+		};
+	};
+
+	/* Enable the I2C1 bus and the keyboard */
+	fragment@3 {
+		target = <&i2c1>;
+
+		__overlay__ {
+			#address-cells = <1>;
+
+			#size-cells = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&i2c1_pins_a>;
+			status = "okay";
+
+			keyboard@34 {
+				compatible = "ti,tca8418";
+				reg = <0x34>;
+				interrupt-parent = <&pio>;
+				interrupts = <6 1 2>;
+
+				keypad,num-rows = <6>;
+				keypad,num-columns = <10>;
+				keypad,autorepeat;
+				linux,keymap = <
+						0x00000002
+						0x00010003
+						0x00020004
+						0x00030005
+						0x00040006
+						0x00050007
+						0x00060008
+						0x00070009
+						0x0008000a
+						0x0009000b
+
+						0x01000010
+						0x01010011
+						0x01020012
+						0x01030013
+						0x01040014
+						0x01050015
+						0x01060016
+						0x01070017
+						0x01080018
+						0x01090019
+
+						0x0200001e
+						0x0201001f
+						0x02020020
+						0x02030021
+						0x02040022
+						0x02050023
+						0x02060024
+						0x02070025
+						0x02080026
+						0x0209001c
+
+						0x0300002a
+						0x0301002c
+						0x0302002d
+						0x0303002e
+						0x0304002f
+						0x03050030
+						0x03060031
+						0x03070032
+						0x03080067
+						0x0309006c
+
+						0x0400001d
+						0x04010064
+						0x04020038
+						0x04030039
+						0x0404000f
+						0x04050035
+						0x04060036
+						0x04080069
+						0x0409006a
+
+						0x05000029
+						0x0501004a
+						0x0502004e
+						0x0503000e
+						0x05040034
+				>;
+			};
+		};
+	};
+
+	/* Enable the touchscreen */
+	fragment@4 {
+		target = <&rtp>;
+
+		__overlay__ {
+			touchscreen-inverted-x;
+			touchscreen-inverted-y;
+			allwinner,ts-attached;
+		};
+	};
+
+	/* Enable our panel */
+	fragment@5 {
+		target-path = "/";
+
+		__overlay__ {
+			panel {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "olimex,lcd-olinuxino-43-ts";
+				backlight = <&backlight>;
+
+				port@0 {
+					reg = <0>;
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					panel_input: endpoint@0 {
+						reg = <0>;
+						remote-endpoint = <&tcon0_out_panel>;
+					};
+				};
+			};
+		};
+	};
+
+	/* Link the TCON with the panel */
+	fragment@6 {
+		target = <&tcon0_out>;
+
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			tcon0_out_panel: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&panel_input>;
+				allwinner,panel;
+			};
+		};
+	};
+
+	/* Register the LCD pins with pinctrl */
+	fragment@7 {
+		target = <&tcon0>;
+
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&lcd_rgb565_pins>;
+		};
+	};
+};
