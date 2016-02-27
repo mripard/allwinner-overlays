@@ -1,0 +1,64 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+
+	/* Create our pinctrl nodes */
+	fragment@0 {
+		target = <&pio>;
+
+		__overlay__ {
+			chip_spi2_pins: spi2@0 {
+				allwinner,pins = "PE1", "PE2", "PE3";
+				allwinner,function = "spi2";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
+
+			chip_spi2_cs0_pins: spi2-cs0@0 {
+				allwinner,pins = "PE0";
+				allwinner,function = "spi2";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
+
+			chip_st7565_pins: st7565_pins@0 {
+				allwinner,pins = "PE5", "PE6";
+				allwinner,function = "gpio_out";
+				allwinner,drive = <0>;
+				allwinner,pull = <0>;
+			};
+		};
+	};
+
+	/*
+	 * And enable our SPI device, with an spidev device connected
+	 * to it
+	*/
+	fragment@1 {
+		target = <&spi2>;
+
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&chip_spi2_pins>,
+				    <&chip_spi2_cs0_pins>;
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			st7565: st7565@0{
+				compatible = "fb_st7565";
+				reg = <0>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&chip_st7565_pins>;
+				
+				spi-max-frequency = <16000000>;
+				buswidth = <8>;
+				dc-gpios = <&pio 4 6 0>;
+				reset-gpios = <&pio 4 5 0>;
+				debug = <0>;
+			};
+		};
+	};
+};
