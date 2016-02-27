@@ -1,6 +1,10 @@
 /dts-v1/;
 /plugin/;
 
+#include <dt-bindings/gpio/gpio.h>
+
+#include <dt-bindings/pinctrl/sun4i-a10.h>
+
 / {
 	compatible = "nextthing,chip", "allwinner,sun5i-r8";
 
@@ -12,22 +16,22 @@
 			chip_spi2_pins: spi2@0 {
 				allwinner,pins = "PE1", "PE2", "PE3";
 				allwinner,function = "spi2";
-				allwinner,drive = <0>;
-				allwinner,pull = <0>;
+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
 			};
 
 			chip_spi2_cs0_pins: spi2-cs0@0 {
 				allwinner,pins = "PE0";
 				allwinner,function = "spi2";
-				allwinner,drive = <0>;
-				allwinner,pull = <0>;
+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
 			};
 
 			chip_st7565_pins: st7565_pins@0 {
 				allwinner,pins = "PE5", "PE6";
 				allwinner,function = "gpio_out";
-				allwinner,drive = <0>;
-				allwinner,pull = <0>;
+				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
 			};
 		};
 	};
@@ -55,8 +59,8 @@
 				
 				spi-max-frequency = <16000000>;
 				buswidth = <8>;
-				dc-gpios = <&pio 4 6 0>;
-				reset-gpios = <&pio 4 5 0>;
+				dc-gpios = <&pio 4 6 GPIO_ACTIVE_HIGH>;
+				reset-gpios = <&pio 4 5 GPIO_ACTIVE_HIGH>;
 				debug = <0>;
 			};
 		};
