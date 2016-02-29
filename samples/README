@@ -1,0 +1,26 @@
+The NTC 4.4 kernel for the CHIP supports loading automatically
+overlays through the DIP spec, but also supports manually loading some
+through an interface based on the configfs virtual filesystem.
+
+In order to apply such an overlay, first compile it using the Makefile
+provided. You should end up with a *.dtbo file. Copy that file to the
+CHIP.
+
+Then, we should make sure that configfs is properly mounted.
+
+mount -t configfs none /sys/kernel/config
+
+We can now advise the kernel that a new device tree is going to be
+applied:
+
+mkdir /sys/kernel/config/overlays/sample
+
+And now, we can apply the overlay
+
+cat sample.dtbo > /sys/kernel/config/overlays/sample/dtbo
+
+
+If you want to remove it later on, simply remove the directory you
+created:
+
+rmdir /sys/kernel/config/overlays/sample
