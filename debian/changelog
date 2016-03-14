@@ -1,0 +1,5 @@
+chip-dt-overlays (0.1) jessie; urgency=high
+
+  * Initial Release.
+
+ -- Ben Young <software@nextthing.co>  Mon, 14 Mar 2016 16:20:51 -0800
