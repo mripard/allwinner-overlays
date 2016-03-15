@@ -2,7 +2,7 @@ GCC?=gcc
 DTC?=dtc
 DTC_OPTIONS?=-@
 
-OBJECTS:= $(patsubst %.dts,%.dtbo,$(wildcard firmware/*.dts samples/*.dts))
+OBJECTS:= $(patsubst %.dts,%.dtbo,$(wildcard firmware/*.dts firmware/early/*.dts samples/*.dts))
 
 %.pre.dts: %.dts
 	$(GCC) -E -nostdinc -I$(CURDIR)/include -x assembler-with-cpp -o $@ $^
