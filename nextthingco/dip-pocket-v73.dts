@@ -55,7 +55,7 @@
 
 &keyboard {
 	linux,keymap = <
-			MATRIX_KEY(0, 0, KEY_EQUAL)
+			MATRIX_KEY(0, 0, 13)
 			MATRIX_KEY(0, 1, KEY_1)
 			MATRIX_KEY(0, 2, KEY_2)
 			MATRIX_KEY(0, 3, KEY_3)
