@@ -96,10 +96,9 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			tcon0_out_hdmi: endpoint@1 {
-				reg = <1>;
+			tcon0_out_hdmi: endpoint@0 {
+				reg = <0>;
 				remote-endpoint = <&hdmi_input>;
-				allwinner,bridge;
 			};
 		};
 	};
