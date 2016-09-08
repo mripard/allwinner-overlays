@@ -1,3 +1,9 @@
+chip-dt-overlays (0.3) jessie; urgency=high
+
+  * Set backlight PWM to inverted
+
+ -- Jose Angel Torres <software@nextthing.co>  Thu, 08 Sep 2016 11:29:49 -0700
+
 chip-dt-overlays (0.2) jessie; urgency=high
 
   * Fix pocketchip backlight ramp to be non-linear.
