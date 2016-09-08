@@ -83,7 +83,7 @@
 		__overlay__ {
 			backlight: backlight {
 				compatible = "pwm-backlight";
-				pwms = <&pwm 0 8000 0>;
+				pwms = <&pwm 0 8000 1>;
 
 				brightness-levels = <0 1 2 4 8 12 16 24 28 32 100>;
 				default-brightness-level = <8>;
