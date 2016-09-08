@@ -1,3 +1,9 @@
+chip-dt-overlays (0.2) jessie; urgency=high
+
+  * Fix pocketchip backlight ramp to be non-linear.
+
+ -- Andrew Hay Kurtz <software@nextthing.co>  Thu, 8 Sep 2016 10:08:55 -0800
+
 chip-dt-overlays (0.1) jessie; urgency=high
 
   * Initial Release.
