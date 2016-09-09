@@ -179,4 +179,15 @@
 			pinctrl-0 = <&lcd_rgb565_pins>;
 		};
 	};
+
+	/* PocketCHIP LED definition */
+	fragment@7 {
+		target = <&leds>;
+
+		__overlay__ {
+			status {
+				linux,default-trigger = "default-on";
+			};
+		};
+	};
 };
