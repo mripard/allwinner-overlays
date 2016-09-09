@@ -1,3 +1,9 @@
+chip-dt-overlays (0.4) jessie; urgency=high
+
+  * Set default PocketCHIP status led behaviour to always-on
+
+ -- Ben Young <software@nextthing.co>  Fri, 09 Aug 2016 13:28:49 -0700
+
 chip-dt-overlays (0.3) jessie; urgency=high
 
   * Set backlight PWM to inverted
