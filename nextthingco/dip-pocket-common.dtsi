@@ -181,7 +181,7 @@
 	};
 
 	/* PocketCHIP LED definition */
-	fragment@7 {
+	fragment@8 {
 		target = <&leds>;
 
 		__overlay__ {
