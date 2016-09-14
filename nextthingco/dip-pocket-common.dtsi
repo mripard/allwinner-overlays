@@ -182,11 +182,11 @@
 
 	/* PocketCHIP LED definition */
 	fragment@8 {
-		target = <&leds>;
-
 		__overlay__ {
-			status {
-				linux,default-trigger = "default-on";
+			leds {
+				status {
+					linux,default-trigger = "default-on";
+				};
 			};
 		};
 	};
