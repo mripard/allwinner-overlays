@@ -46,12 +46,6 @@
 /plugin/;
 
 / {
-	compatible = "nextthing,crumb", "nextthing,gr8";
-
-	aliases {
-		spi2 = &spi2;
-	};
-
 	/*
 	 * Enable our SPI device, with an spidev device connected
 	 * to it
@@ -78,43 +72,20 @@
 	};
 
 	fragment@1 {
-		target-path = "/soc";
+		target=<&spi2>;
 
 		__overlay__ {
-			spi2: spi@01c17000 {
-				compatible = "allwinner,sun4i-a10-spi";
-				reg = <0x01c17000 0x1000>;
-				interrupts = <12>;
-				clocks = <&ahb_gates 22>, <&spi2_clk>;
-				clock-names = "ahb", "mod";
-				dmas = <&dma 1 29>,
-				<&dma 1 28>;
-				dma-names = "rx", "tx";
 				status = "okay";
-				#address-cells = <1>;
-				#size-cells = <0>;
-			};
-		};
-	};
+				pinctrl-0 = <&spi2_pins_a>, <&spi2_cs0_pins_a>;
 
-	fragment@2 {
-		target-path = "/";
+				spi2_0 {
+					#address-cells = <1>;
+					#size-cells = <0>;
 
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&spi2_pins_a>,
-				    <&spi2_cs0_pins_a>;
+					compatible = "spidev";
 
-			status = "okay";
-
-			spi2_0 {
-				#address-cells = <1>;
-				#size-cells = <0>;
-				
-				compatible = "spidev";
-
-				reg = <0>;
-				spi-max-frequency = <5000000>;
+					reg = <0>;
+					spi-max-frequency = <50000000>;
 			};
 		};
 	};
