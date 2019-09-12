@@ -45,71 +45,37 @@
 /dts-v1/;
 /plugin/;
 
-/ {
-	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+&{/aliases} {
+	i2c1 = "/soc@01c00000/i2c@01c2b000";
+};
 
-	/* Pinctrl changes */
-	fragment@0 {
-		target-path = "/aliases";
+&i2c1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_a>;
+	status = "okay";
 
-		__overlay__ {
-			i2c1 = "/soc@01c00000/i2c@01c2b000";
-		};
-	};
+	hdmi-bridge@76 {
+		compatible = "chrontel,ch7033";
+		reg = <0x76>;
 
-	/* Enable the bridge */
-	fragment@1 {
-		target = <&i2c1>;
-
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&i2c1_pins_a>;
-			status = "okay";
-
-			hdmi-bridge@76 {
-			        #address-cells = <1>;
-				#size-cells = <0>;
-				compatible = "chrontel,ch7033";
-				reg = <0x76>;
-
-				port@0 {
-					reg = <0>;
-					#address-cells = <1>;
-					#size-cells = <0>;
-
-					hdmi_input: endpoint@0 {
-					        reg = <0>;
-					        remote-endpoint = <&tcon0_out_hdmi>;
-					};
-				};
+		port {
+			hdmi_input: endpoint {
+				remote-endpoint = <&tcon0_out_hdmi>;
 			};			
 		};
 	};
+};
 
-	/* Link the TCON with our bridge */
-	fragment@2 {
-		target = <&tcon0_out>;
+&tcon0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&lcd_rgb565_pins>;
+	status = "okay";
+};
 
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			tcon0_out_hdmi: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&hdmi_input>;
-			};
-		};
-	};
-
-	/* Register the LCD pins with pinctrl */
-	fragment@3 {
-		target = <&tcon0>;
-
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&lcd_rgb565_pins>;
-		};
+&tcon0_out {
+	tcon0_out_hdmi: endpoint {
+		remote-endpoint = <&hdmi_input>;
 	};
 };

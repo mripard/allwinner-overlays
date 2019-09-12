@@ -45,17 +45,8 @@
 /dts-v1/;
 /plugin/;
 
-/ {
-	compatible = "nextthing,chip", "allwinner,sun5i-r8";
-
-	/* Enable the PWM */
-	fragment@0 {
-		target = <&pwm>;
-
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&pwm0_pins>;
-			status = "okay";
-		};
-	};
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm0_pins>;
+	status = "okay";
 };

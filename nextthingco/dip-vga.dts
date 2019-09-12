@@ -45,76 +45,38 @@
 /dts-v1/;
 /plugin/;
 
-/ {
-	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+&{/aliases} {
+	i2c1 = "/soc@01c00000/i2c@01c2b000";
+};
 
-	/* Aliases changes */
-	fragment@0 {
-		target-path = "/aliases";
+&{/} {
+	bridge {
+		compatible = "dumb-vga-bridge";
+		ddc-i2c-bus = <&i2c1>;
 
-		__overlay__ {
-			i2c1 = "/soc@01c00000/i2c@01c2b000";
-		};
-	};
-
-	/* Enable the i2c bus used for EDIDs */
-	fragment@1 {
-		target = <&i2c1>;
-
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&i2c1_pins_a>;
-			status = "okay";
-		};
-	};
-
-	/* Enable the bridge */
-	fragment@2 {
-		target-path = "/";
-
-		__overlay__ {
-			bridge {
-				#address-cells = <1>;
-				#size-cells = <0>;
-				compatible = "dumb-vga-bridge";
-				ddc-i2c-bus = <&i2c1>;
-
-				port@0 {
-					reg = <0>;
-					#address-cells = <1>;
-					#size-cells = <0>;
-
-					vga_input: endpoint@0 {
-						reg = <0>;
-						remote-endpoint = <&tcon0_out_vga>;
-					};
-				};
+		port {
+			vga_input: endpoint {
+				remote-endpoint = <&tcon0_out_vga>;
 			};			
 		};
 	};
 
-	/* Link the TCON with our bridge */
-	fragment@3 {
-		target = <&tcon0_out>;
+};
 
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
+&i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_a>;
+	status = "okay";
+};
 
-			tcon0_out_vga: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&vga_input>;
-			};
-		};
-	};
+&tcon0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&lcd_rgb565_pins>;
+	status = "okay";
+};
 
-	/* Register the LCD pins with pinctrl */
-	fragment@4 {
-		target = <&tcon0>;
-
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&lcd_rgb565_pins>;
-		};
+&tcon0_out {
+	tcon0_out_vga: endpoint {
+		remote-endpoint = <&vga_input>;
 	};
 };

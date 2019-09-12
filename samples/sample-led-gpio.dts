@@ -46,21 +46,12 @@
 /dts-v1/;
 /plugin/;
 
-/ {
-	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+&{/} {
+	leds {
+		compatible = "gpio-leds";
 
-	/* And enable the led-gpios driver on this pin */
-	fragment@0 {
-		target-path = "/";
-
-		__overlay__ {
-			test {
-				compatible = "gpio-leds";
-
-				led {
-					gpios = <&xio 0 1>;
-				};
-			};
+		led {
+			gpios = <&xio 0 1>;
 		};
 	};
 };

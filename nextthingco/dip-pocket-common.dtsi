@@ -48,144 +48,71 @@
 
 #include <dt-bindings/pinctrl/sun4i-a10.h>
 
-/ {
-	compatible = "nextthing,chip", "allwinner,sun5i-r8";
+&{/} {
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 0 8000 1>;
+		brightness-levels = <0 1 2 4 8 12 16 24 28 32 100>;
+		default-brightness-level = <8>;
+		enable-gpios = <&pio 3 18 GPIO_ACTIVE_HIGH>;
+	};
 
-	/* Pinctrl changes */
-	fragment@0 {
-		target = <&pio>;
+	panel {
+		compatible = "olimex,lcd-olinuxino-43-ts";
+		backlight = <&backlight>;
 
-		__overlay__ {
-			chip_bl_en: chip_backlight_enable@0 {
-				allwinner,pins = "PD18";
-				allwinner,function = "gpio_out";
-				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+		port {
+			panel_input: endpoint {
+				remote-endpoint = <&tcon0_out_panel>;
 			};
 		};
 	};
 
-	/* Enable the PWM */
-	fragment@1 {
-		target = <&pwm>;
+};
 
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&pwm0_pins>;
-			status = "okay";
-		};
+&i2c1 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_a>;
+	status = "okay";
+
+	keyboard: keyboard@34 {
+		compatible = "ti,tca8418";
+		reg = <0x34>;
+		interrupt-parent = <&pio>;
+		interrupts = <6 1 IRQ_TYPE_EDGE_FALLING>;
+
+		keypad,num-rows = <6>;
+		keypad,num-columns = <10>;
+		keypad,autorepeat;
 	};
+};
 
-	/* And enable the backlight running on that PWM */
-	fragment@2 {
-		target-path = "/";
+&leds_status {
+	linux,default-trigger = "default-on";
+};
 
-		__overlay__ {
-			backlight: backlight {
-				compatible = "pwm-backlight";
-				pwms = <&pwm 0 8000 1>;
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm0_pins>;
+	status = "okay";
+};
 
-				brightness-levels = <0 1 2 4 8 12 16 24 28 32 100>;
-				default-brightness-level = <8>;
+&rtp {
+	touchscreen-inverted-x;
+	touchscreen-inverted-y;
+	allwinner,ts-attached;
+};
 
-				pinctrl-names = "default";
-				pinctrl-0 = <&chip_bl_en>;
-				enable-gpios = <&pio 3 18 GPIO_ACTIVE_HIGH>;
-			};
-		};
+&tcon_out {
+	tcon0_out_panel: endpoint {
+		remote-endpoint = <&panel_input>;
 	};
+};
 
-	/* Enable the I2C1 bus and the keyboard */
-	fragment@3 {
-		target = <&i2c1>;
-
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-			pinctrl-names = "default";
-			pinctrl-0 = <&i2c1_pins_a>;
-			status = "okay";
-
-			keyboard: keyboard@34 {
-				compatible = "ti,tca8418";
-				reg = <0x34>;
-				interrupt-parent = <&pio>;
-				interrupts = <6 1 IRQ_TYPE_EDGE_FALLING>;
-
-				keypad,num-rows = <6>;
-				keypad,num-columns = <10>;
-				keypad,autorepeat;
-			};
-		};
-	};
-
-	/* Enable the touchscreen */
-	fragment@4 {
-		target = <&rtp>;
-
-		__overlay__ {
-			touchscreen-inverted-x;
-			touchscreen-inverted-y;
-			allwinner,ts-attached;
-		};
-	};
-
-	/* Enable our panel */
-	fragment@5 {
-		target-path = "/";
-
-		__overlay__ {
-			panel {
-				#address-cells = <1>;
-				#size-cells = <0>;
-				compatible = "olimex,lcd-olinuxino-43-ts";
-				backlight = <&backlight>;
-
-				port@0 {
-					reg = <0>;
-					#address-cells = <1>;
-					#size-cells = <0>;
-
-					panel_input: endpoint@0 {
-						reg = <0>;
-						remote-endpoint = <&tcon0_out_panel>;
-					};
-				};
-			};
-		};
-	};
-
-	/* Link the TCON with the panel */
-	fragment@6 {
-		target = <&tcon0_out>;
-
-		__overlay__ {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			tcon0_out_panel: endpoint@0 {
-				reg = <0>;
-				remote-endpoint = <&panel_input>;
-			};
-		};
-	};
-
-	/* Register the LCD pins with pinctrl */
-	fragment@7 {
-		target = <&tcon0>;
-
-		__overlay__ {
-			pinctrl-names = "default";
-			pinctrl-0 = <&lcd_rgb565_pins>;
-		};
-	};
-
-	/* PocketCHIP LED definition */
-	fragment@8 {
-		target = <&leds_status>;
-
-		__overlay__ {
-			linux,default-trigger = "default-on";
-		};
-	};
+&tcon0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&lcd_rgb565_pins>;
+	status = "okay";
 };
